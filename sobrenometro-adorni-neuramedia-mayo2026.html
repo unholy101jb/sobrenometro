@@ -1,0 +1,1433 @@
+<!-- sobrenometro-adorni-neuramedia-mayo2026.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>SOBRENÓMETRO — Adorni × Fantino</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg: #080B0F;
+    --surface: #0E1218;
+    --surface2: #141A22;
+    --border: #1E2A36;
+    --red: #E8271A;
+    --red-dim: #7A140E;
+    --indigo: #4F6BFF;
+    --indigo-dim: #2A3A8A;
+    --amber: #F5A623;
+    --text: #E8E4DC;
+    --text-dim: #8A9099;
+    --text-muted: #3D4550;
+    --mono: 'DM Mono', monospace;
+    --display: 'Bebas Neue', sans-serif;
+    --serif: 'Instrument Serif', serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 14px;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* NOISE OVERLAY */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.4;
+  }
+
+  /* SCANLINE */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.03) 2px,
+      rgba(0,0,0,0.03) 4px
+    );
+    pointer-events: none;
+    z-index: 9998;
+  }
+
+  /* ── HEADER ── */
+  header {
+    position: relative;
+    border-bottom: 1px solid var(--border);
+    padding: 0;
+    overflow: hidden;
+  }
+
+  .header-tape {
+    background: var(--red);
+    color: white;
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 6px 24px;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  .tape-inner {
+    display: inline-block;
+    animation: marquee 30s linear infinite;
+  }
+
+  @keyframes marquee {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  .header-body {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 40px;
+    align-items: end;
+    padding: 48px 64px 40px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .header-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 12px;
+  }
+
+  .header-title {
+    font-family: var(--display);
+    font-size: clamp(52px, 8vw, 96px);
+    line-height: 0.9;
+    color: var(--text);
+    letter-spacing: 0.02em;
+  }
+
+  .header-title span { color: var(--red); }
+
+  .header-meta {
+    margin-top: 20px;
+    display: flex;
+    gap: 32px;
+    flex-wrap: wrap;
+  }
+
+  .meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .meta-key {
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  .meta-val {
+    font-size: 13px;
+    color: var(--text-dim);
+    font-style: italic;
+  }
+
+  .header-badge {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 24px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+  }
+
+  .badge-icon {
+    font-size: 48px;
+    line-height: 1;
+  }
+
+  .badge-label {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    text-align: center;
+  }
+
+  /* ── LAYOUT ── */
+  .container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 64px;
+  }
+
+  section {
+    padding: 64px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-label {
+    font-size: 9px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 32px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ── SCORE CARDS ── */
+  .score-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+
+  .score-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 32px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .score-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--red);
+  }
+
+  .score-card.indigo::before { background: var(--indigo); }
+
+  .score-name {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+  }
+
+  .score-role {
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-bottom: 24px;
+    font-style: italic;
+  }
+
+  .score-number {
+    font-family: var(--display);
+    font-size: 80px;
+    line-height: 1;
+    color: var(--red);
+    letter-spacing: 0.02em;
+  }
+
+  .score-card.indigo .score-number { color: var(--indigo); }
+
+  .score-status {
+    display: inline-block;
+    margin-top: 16px;
+    padding: 4px 12px;
+    background: rgba(232,39,26,0.15);
+    border: 1px solid var(--red-dim);
+    color: var(--red);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  .score-card.indigo .score-status {
+    background: rgba(79,107,255,0.15);
+    border-color: var(--indigo-dim);
+    color: var(--indigo);
+  }
+
+  .progress-bar-wrap {
+    margin-top: 20px;
+    height: 4px;
+    background: var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .progress-bar-fill {
+    height: 100%;
+    background: var(--red);
+    width: 0%;
+    transition: width 1.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .score-card.indigo .progress-bar-fill { background: var(--indigo); }
+
+  .score-breakdown {
+    margin-top: 20px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+  }
+
+  .breakdown-item { display: flex; flex-direction: column; gap: 4px; }
+  .breakdown-key { font-size: 9px; color: var(--text-muted); letter-spacing: 0.1em; text-transform: uppercase; }
+  .breakdown-val { font-size: 16px; font-family: var(--display); letter-spacing: 0.05em; }
+  .breakdown-val.neg { color: var(--red); }
+  .breakdown-val.pos { color: #34D399; }
+  .breakdown-val.neutral { color: var(--text-dim); }
+
+  /* ── CHART ── */
+  .chart-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 32px;
+    margin-top: 24px;
+  }
+
+  .chart-title {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 24px;
+  }
+
+  /* ── ACCORDION ── */
+  .accordion { display: flex; flex-direction: column; gap: 8px; }
+
+  .acc-item {
+    border: 1px solid var(--border);
+    overflow: hidden;
+  }
+
+  .acc-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px;
+    cursor: pointer;
+    background: var(--surface);
+    user-select: none;
+    transition: background 0.2s;
+  }
+
+  .acc-header:hover { background: var(--surface2); }
+
+  .acc-header-left { display: flex; align-items: center; gap: 16px; }
+
+  .acc-code {
+    font-family: var(--mono);
+    font-size: 10px;
+    padding: 3px 8px;
+    background: rgba(232,39,26,0.15);
+    border: 1px solid var(--red-dim);
+    color: var(--red);
+    letter-spacing: 0.1em;
+  }
+
+  .acc-code.blue {
+    background: rgba(79,107,255,0.15);
+    border-color: var(--indigo-dim);
+    color: var(--indigo);
+  }
+
+  .acc-code.amber {
+    background: rgba(245,166,35,0.15);
+    border-color: rgba(245,166,35,0.4);
+    color: var(--amber);
+  }
+
+  .acc-title {
+    font-size: 13px;
+    color: var(--text);
+    font-style: italic;
+  }
+
+  .acc-deduction {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--red);
+    font-weight: 500;
+  }
+
+  .acc-chevron {
+    font-size: 10px;
+    color: var(--text-muted);
+    margin-left: 16px;
+    transition: transform 0.3s;
+  }
+
+  .acc-item.open .acc-chevron { transform: rotate(180deg); }
+
+  .acc-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s cubic-bezier(0.4,0,0.2,1);
+    background: var(--bg);
+  }
+
+  .acc-item.open .acc-body { max-height: 600px; }
+
+  .acc-content {
+    padding: 24px;
+    border-top: 1px solid var(--border);
+    display: grid;
+    gap: 16px;
+  }
+
+  .acc-field-label {
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+  }
+
+  .acc-field-val {
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.6;
+  }
+
+  .acc-field-val em {
+    color: var(--amber);
+    font-style: italic;
+  }
+
+  /* ── TABLE ── */
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+  }
+
+  .data-table th {
+    text-align: left;
+    padding: 12px 16px;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+  }
+
+  .data-table td {
+    padding: 14px 16px;
+    border-bottom: 1px solid rgba(30,42,54,0.5);
+    vertical-align: top;
+    line-height: 1.5;
+    color: var(--text-dim);
+  }
+
+  .data-table tr:last-child td { border-bottom: none; }
+
+  .tag {
+    display: inline-block;
+    padding: 3px 10px;
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    border: 1px solid;
+    white-space: nowrap;
+  }
+
+  .tag.rigor { color: #34D399; border-color: rgba(52,211,153,0.4); background: rgba(52,211,153,0.08); }
+  .tag.softball { color: var(--amber); border-color: rgba(245,166,35,0.4); background: rgba(245,166,35,0.08); }
+  .tag.complaciente { color: var(--red); border-color: var(--red-dim); background: rgba(232,39,26,0.08); }
+  .tag.omision { color: #C084FC; border-color: rgba(192,132,252,0.4); background: rgba(192,132,252,0.08); }
+
+  /* ── LOST QUESTIONS ── */
+  .questions-grid { display: grid; gap: 16px; }
+
+  .question-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--indigo);
+    padding: 20px 24px;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+  }
+
+  .question-num {
+    font-family: var(--display);
+    font-size: 32px;
+    color: var(--indigo-dim);
+    line-height: 1;
+    flex-shrink: 0;
+    width: 36px;
+  }
+
+  .question-text {
+    font-size: 14px;
+    color: var(--text);
+    font-style: italic;
+    line-height: 1.6;
+  }
+
+  /* ── VEREDICTO ── */
+  .veredicto-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--red);
+    padding: 48px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .veredicto-block::before {
+    content: '"';
+    position: absolute;
+    top: -20px;
+    left: 32px;
+    font-family: var(--serif);
+    font-size: 200px;
+    color: rgba(232,39,26,0.05);
+    line-height: 1;
+    pointer-events: none;
+  }
+
+  .veredicto-text {
+    font-family: var(--serif);
+    font-size: 18px;
+    line-height: 1.8;
+    color: var(--text);
+    position: relative;
+  }
+
+  .veredicto-text p + p { margin-top: 20px; }
+
+  .veredicto-highlight {
+    color: var(--red);
+    font-style: italic;
+  }
+
+  /* ── TWITTER BLOCK ── */
+  .twitter-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 32px;
+  }
+
+  .tweet {
+    padding: 20px 0;
+    border-bottom: 1px dashed var(--border);
+    font-size: 14px;
+    color: var(--text-dim);
+    line-height: 1.6;
+    position: relative;
+  }
+
+  .tweet:last-child { border-bottom: none; }
+
+  .tweet-num {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+    letter-spacing: 0.1em;
+  }
+
+  .copy-btn {
+    display: block;
+    width: 100%;
+    margin-top: 24px;
+    padding: 14px;
+    background: transparent;
+    border: 1px solid var(--indigo);
+    color: var(--indigo);
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .copy-btn:hover {
+    background: var(--indigo);
+    color: white;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    padding: 48px 64px;
+    border-top: 1px solid var(--border);
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: gap;
+    gap: 16px;
+  }
+
+  .footer-brand {
+    font-family: var(--display);
+    font-size: 24px;
+    color: var(--text-muted);
+    letter-spacing: 0.05em;
+  }
+
+  .footer-note {
+    font-size: 11px;
+    color: var(--text-muted);
+    max-width: 400px;
+    text-align: right;
+    line-height: 1.6;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    .container { padding: 0 24px; }
+    .header-body { padding: 32px 24px 28px; grid-template-columns: 1fr; }
+    .score-grid { grid-template-columns: 1fr; }
+    footer { padding: 32px 24px; flex-direction: column; align-items: flex-start; }
+    .footer-note { text-align: left; }
+    .veredicto-block { padding: 28px; }
+  }
+
+  /* ANIMATE ON LOAD */
+  .fade-in {
+    opacity: 0;
+    transform: translateY(16px);
+    animation: fadeUp 0.6s ease forwards;
+  }
+
+  @keyframes fadeUp {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .fade-in:nth-child(1) { animation-delay: 0.1s; }
+  .fade-in:nth-child(2) { animation-delay: 0.2s; }
+  .fade-in:nth-child(3) { animation-delay: 0.3s; }
+  .fade-in:nth-child(4) { animation-delay: 0.4s; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="header-tape">
+    <span class="tape-inner">
+      SOBRENÓMETRO · AUDITORÍA RETÓRICA Y PERIODÍSTICA · SOBRENÓMETRO · AUDITORÍA RETÓRICA Y PERIODÍSTICA · SOBRENÓMETRO · AUDITORÍA RETÓRICA Y PERIODÍSTICA · SOBRENÓMETRO · AUDITORÍA RETÓRICA Y PERIODÍSTICA · SOBRENÓMETRO · AUDITORÍA RETÓRICA Y PERIODÍSTICA · 
+    </span>
+  </div>
+  <div class="header-body">
+    <div>
+      <div class="header-label">Protocolo de análisis activado</div>
+      <div class="header-title">SOBRE<span>NÓ</span>METRO</div>
+      <div class="header-meta">
+        <div class="meta-item">
+          <span class="meta-key">Entrevistado</span>
+          <span class="meta-val">Manuel Adorni</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-key">Entrevistador</span>
+          <span class="meta-val">Alejandro Fantino</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-key">Programa</span>
+          <span class="meta-val">La Cosa en Sí — Neura Media</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-key">Fecha</span>
+          <span class="meta-val">Mayo 2026</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-key">Duración</span>
+          <span class="meta-val">~150 minutos</span>
+        </div>
+      </div>
+    </div>
+    <div class="header-badge">
+      <div class="badge-icon">⚖️</div>
+      <div class="badge-label">Retórica<br/>Lógica<br/>Veracidad</div>
+    </div>
+  </div>
+</header>
+
+<!-- SCORES -->
+<section>
+  <div class="container">
+    <div class="section-label">Puntajes finales</div>
+    <div class="score-grid">
+      <!-- Adorni -->
+      <div class="score-card fade-in">
+        <div class="score-name">Entrevistado</div>
+        <div class="score-role" style="font-family:var(--serif)">Manuel Adorni · Jefe de Gabinete</div>
+        <div class="score-number" id="score-adorni">0</div>
+        <div class="score-status">🔴 Estado: Crítico</div>
+        <div class="progress-bar-wrap">
+          <div class="progress-bar-fill" id="bar-adorni"></div>
+        </div>
+        <div class="score-breakdown">
+          <div class="breakdown-item">
+            <span class="breakdown-key">Inicio</span>
+            <span class="breakdown-val neutral">100</span>
+          </div>
+          <div class="breakdown-item">
+            <span class="breakdown-key">Deducciones</span>
+            <span class="breakdown-val neg">−95</span>
+          </div>
+          <div class="breakdown-item">
+            <span class="breakdown-key">Bonificaciones</span>
+            <span class="breakdown-val pos">+10</span>
+          </div>
+        </div>
+      </div>
+      <!-- Fantino -->
+      <div class="score-card indigo fade-in">
+        <div class="score-name">Entrevistador</div>
+        <div class="score-role" style="font-family:var(--serif)">Alejandro Fantino · Neura Media</div>
+        <div class="score-number" id="score-fantino">0</div>
+        <div class="score-status">🔴 Estado: Colapso Total</div>
+        <div class="progress-bar-wrap">
+          <div class="progress-bar-fill" id="bar-fantino"></div>
+        </div>
+        <div class="score-breakdown">
+          <div class="breakdown-item">
+            <span class="breakdown-key">Inicio</span>
+            <span class="breakdown-val neutral">100</span>
+          </div>
+          <div class="breakdown-item">
+            <span class="breakdown-key">Deducciones</span>
+            <span class="breakdown-val neg">−135</span>
+          </div>
+          <div class="breakdown-item">
+            <span class="breakdown-key">Bonificaciones</span>
+            <span class="breakdown-val pos">+15</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chart -->
+    <div class="chart-wrap fade-in" style="margin-top:24px">
+      <div class="chart-title">Desglose de deducciones y bonificaciones</div>
+      <canvas id="scoreChart" height="100"></canvas>
+    </div>
+  </div>
+</section>
+
+<!-- EVASIVAS -->
+<section>
+  <div class="container">
+    <div class="section-label">Análisis de Evasivas (Pivoting)</div>
+    <div class="accordion" id="acc-evasivas">
+
+      <div class="acc-item">
+        <div class="acc-header">
+          <div class="acc-header-left">
+            <span class="acc-code">E-1</span>
+            <span class="acc-title">El escudo judicial permanente</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span class="acc-deduction">−10</span>
+            <span class="acc-chevron">▼</span>
+          </div>
+        </div>
+        <div class="acc-body">
+          <div class="acc-content">
+            <div>
+              <div class="acc-field-label">Pregunta original</div>
+              <div class="acc-field-val">¿Por qué no salís a hablar públicamente de lo que te está pasando?</div>
+            </div>
+            <div>
+              <div class="acc-field-label">Pivoting detectado</div>
+              <div class="acc-field-val">Adorni responde que no puede hablar porque "obstruiría la justicia", convirtiendo su silencio en virtud cívica. Sin embargo, admite haber hablado <em>cuando la causa "no estaba judicializada"</em>. La inconsistencia no es señalada ni por él ni por Fantino.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="acc-item">
+        <div class="acc-header">
+          <div class="acc-header-left">
+            <span class="acc-code">E-2</span>
+            <span class="acc-title">La declaración jurada sin fecha ni contenido</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span class="acc-deduction">−10</span>
+            <span class="acc-chevron">▼</span>
+          </div>
+        </div>
+        <div class="acc-body">
+          <div class="acc-content">
+            <div>
+              <div class="acc-field-label">Pregunta original</div>
+              <div class="acc-field-val">¿Qué vas a hacer con tu declaración jurada?</div>
+            </div>
+            <div>
+              <div class="acc-field-label">Pivoting detectado</div>
+              <div class="acc-field-val">Desvía hacia Patricia Bullrich ("Pato es una fenómena"), la dinámica interna de la mesa política y el argumento de que "todos sabían". <em>Nunca responde cuándo ni qué contendrá la declaración.</em></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="acc-item">
+        <div class="acc-header">
+          <div class="acc-header-left">
+            <span class="acc-code">E-3</span>
+            <span class="acc-title">Bullrich "spoiler" neutralizado</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span class="acc-deduction">−10</span>
+            <span class="acc-chevron">▼</span>
+          </div>
+        </div>
+        <div class="acc-body">
+          <div class="acc-content">
+            <div>
+              <div class="acc-field-label">Pregunta original</div>
+              <div class="acc-field-val">¿Cómo tomaste lo de Bullrich que te "spoileó"?</div>
+            </div>
+            <div>
+              <div class="acc-field-label">Pivoting detectado</div>
+              <div class="acc-field-val">Reencuadra el episodio como algo positivo, eliminando cualquier lectura de tensión interna en el gobierno. <em>Una potencial fractura se convierte en dato anodino.</em></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="acc-item">
+        <div class="acc-header">
+          <div class="acc-header-left">
+            <span class="acc-code">E-4</span>
+            <span class="acc-title">La analogía filosófica para no responder</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span class="acc-deduction">−10</span>
+            <span class="acc-chevron">▼</span>
+          </div>
+        </div>
+        <div class="acc-body">
+          <div class="acc-content">
+            <div>
+              <div class="acc-field-label">Pregunta original</div>
+              <div class="acc-field-val">¿Creés que lo tuyo es análogo a lo que vivió Karina con Andíz?</div>
+            </div>
+            <div>
+              <div class="acc-field-label">Pivoting detectado</div>
+              <div class="acc-field-val">Responde con distinción filosófica entre unívoco, equívoco y análogo. <em>Técnica académica para no comprometerse con ninguna afirmación sustantiva.</em></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="acc-item">
+        <div class="acc-header">
+          <div class="acc-header-left">
+            <span class="acc-code">E-5</span>
+            <span class="acc-title">"Jamás" + relato emocional de los hijos</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span class="acc-deduction">−10</span>
+            <span class="acc-chevron">▼</span>
+          </div>
+        </div>
+        <div class="acc-body">
+          <div class="acc-content">
+            <div>
+              <div class="acc-field-label">Pregunta original</div>
+              <div class="acc-field-val">¿Pensaste alguna vez en renunciar?</div>
+            </div>
+            <div>
+              <div class="acc-field-label">Pivoting detectado</div>
+              <div class="acc-field-val">Responde "jamás" pero deriva inmediatamente al relato de sus hijos, la ciudadanía italiana y el futuro de Argentina. <em>La emoción bloquea el análisis de la presión institucional real sobre su continuidad.</em></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="acc-item">
+        <div class="acc-header">
+          <div class="acc-header-left">
+            <span class="acc-code">E-6</span>
+            <span class="acc-title">"Separar la paja del trigo"</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span class="acc-deduction">−10</span>
+            <span class="acc-chevron">▼</span>
+          </div>
+        </div>
+        <div class="acc-body">
+          <div class="acc-content">
+            <div>
+              <div class="acc-field-label">Pregunta original</div>
+              <div class="acc-field-val">¿Vas a actuar legalmente contra quienes te ofendieron?</div>
+            </div>
+            <div>
+              <div class="acc-field-label">Pivoting detectado</div>
+              <div class="acc-field-val">Dice "sí" pero inmediatamente añade que "hay que separar la paja del trigo", diluyendo el compromiso con una metáfora. <em>Suena firme sin comprometerse con ninguna acción concreta.</em></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="acc-item">
+        <div class="acc-header">
+          <div class="acc-header-left">
+            <span class="acc-code">E-7</span>
+            <span class="acc-title">Argentina Week: del escándalo al triunfo</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span class="acc-deduction">−10</span>
+            <span class="acc-chevron">▼</span>
+          </div>
+        </div>
+        <div class="acc-body">
+          <div class="acc-content">
+            <div>
+              <div class="acc-field-label">Pregunta original</div>
+              <div class="acc-field-val">¿Qué pasó de bueno en Argentina Week?</div>
+            </div>
+            <div>
+              <div class="acc-field-label">Pivoting detectado</div>
+              <div class="acc-field-val">Convierte el viaje que lo tiene bajo investigación en un relato de logros económicos históricos: 16.150 millones de dólares de inversión. <em>El pivot más efectivo de la entrevista. Fantino no retoma el foco original.</em></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="acc-item">
+        <div class="acc-header">
+          <div class="acc-header-left">
+            <span class="acc-code">E-8</span>
+            <span class="acc-title">La conversación con Milei: "fue maravillosa"</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span class="acc-deduction">−10</span>
+            <span class="acc-chevron">▼</span>
+          </div>
+        </div>
+        <div class="acc-body">
+          <div class="acc-content">
+            <div>
+              <div class="acc-field-label">Pregunta original</div>
+              <div class="acc-field-val">¿Cómo fue tu primera conversación con Milei cuando le explicaste todo?</div>
+            </div>
+            <div>
+              <div class="acc-field-label">Pivoting detectado</div>
+              <div class="acc-field-val">Bloquea con el escudo judicial una conversación privada, cuyo contenido no tiene impacto procesal evidente. <em>El escudo se usa aquí de forma preventiva, no necesaria.</em></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="acc-item">
+        <div class="acc-header">
+          <div class="acc-header-left">
+            <span class="acc-code">E-9</span>
+            <span class="acc-title">Jefatura de Gobierno: "fantasía irracional"</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span class="acc-deduction">−10</span>
+            <span class="acc-chevron">▼</span>
+          </div>
+        </div>
+        <div class="acc-body">
+          <div class="acc-content">
+            <div>
+              <div class="acc-field-label">Pregunta original</div>
+              <div class="acc-field-val">¿Te gustaría ser Jefe de Gobierno porteño?</div>
+            </div>
+            <div>
+              <div class="acc-field-label">Pivoting detectado</div>
+              <div class="acc-field-val">Descarta la pregunta calificándola de "fantasía de la vieja política" sin argumentar por qué ganar una elección legislativa no podría ser un antecedente político. <em>El rechazo funciona como cierre anticipado de debate.</em></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- FALACIAS -->
+<section>
+  <div class="container">
+    <div class="section-label">Tácticas y Falacias Lógicas</div>
+    <div class="accordion" id="acc-falacias">
+
+      <div class="acc-item">
+        <div class="acc-header">
+          <div class="acc-header-left">
+            <span class="acc-code">F-1</span>
+            <span class="acc-title">Inversión de la Carga de la Prueba</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span class="acc-deduction">−15</span>
+            <span class="acc-chevron">▼</span>
+          </div>
+        </div>
+        <div class="acc-body">
+          <div class="acc-content">
+            <div>
+              <div class="acc-field-label">Descripción</div>
+              <div class="acc-field-val">Su inocencia es el punto de partida irrefutable. Cualquier cuestionamiento se convierte en ataque ilegítimo. La carga de la prueba queda íntegramente en "el sistema", nunca en él.</div>
+            </div>
+            <div>
+              <div class="acc-field-label">Cita representativa</div>
+              <div class="acc-field-val"><em>"No voy a hablar porque no quiero obstruir la justicia; cuando se aclare todo, voy a hablar."</em></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="acc-item">
+        <div class="acc-header">
+          <div class="acc-header-left">
+            <span class="acc-code">F-2</span>
+            <span class="acc-title">Falsa Dicotomía</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span class="acc-deduction">−15</span>
+            <span class="acc-chevron">▼</span>
+          </div>
+        </div>
+        <div class="acc-body">
+          <div class="acc-content">
+            <div>
+              <div class="acc-field-label">Descripción</div>
+              <div class="acc-field-val">O el gobierno de Milei transforma Argentina, o el país vuelve al kirchnerismo, la inflación y la pobreza. No existe ninguna crítica válida al gobierno actual que no implique desear el retorno del mal absoluto.</div>
+            </div>
+            <div>
+              <div class="acc-field-label">Cita representativa</div>
+              <div class="acc-field-val"><em>"¿Qué hacemos, regalamos la Argentina y vuelvo a sacarle la ciudadanía italiana a mis hijos para que en 20 años se vayan?"</em></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="acc-item">
+        <div class="acc-header">
+          <div class="acc-header-left">
+            <span class="acc-code">F-3</span>
+            <span class="acc-title">Apelación a la Emoción (Pathos Desplazado)</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span class="acc-deduction">−15</span>
+            <span class="acc-chevron">▼</span>
+          </div>
+        </div>
+        <div class="acc-body">
+          <div class="acc-content">
+            <div>
+              <div class="acc-field-label">Descripción</div>
+              <div class="acc-field-val">Los hijos, la esposa, la madre de 70 años, los amigos que no escribieron. Cada vez que el análisis racional amenaza con instalarse, una emoción lo desplaza. La emoción funciona como cortina, no como argumento.</div>
+            </div>
+            <div>
+              <div class="acc-field-label">Cita representativa</div>
+              <div class="acc-field-val"><em>"Vine al gobierno por mis hijos, para que en 20 años no tengan que irse de Argentina."</em></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="acc-item">
+        <div class="acc-header">
+          <div class="acc-header-left">
+            <span class="acc-code">F-4</span>
+            <span class="acc-title">Ad Hominem Invertido (Victimización Sistémica)</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span class="acc-deduction">−15</span>
+            <span class="acc-chevron">▼</span>
+          </div>
+        </div>
+        <div class="acc-body">
+          <div class="acc-content">
+            <div>
+              <div class="acc-field-label">Descripción</div>
+              <div class="acc-field-val">Construye una imagen de víctima del "sistema", los "medios hegemónicos" y "la casta". Esto deslegitima cualquier cuestionamiento sin necesidad de refutarlo. Quien lo critica automáticamente pasa a ser parte del sistema opresor.</div>
+            </div>
+            <div>
+              <div class="acc-field-label">Cita representativa</div>
+              <div class="acc-field-val"><em>"Esto no fue para pegarme a mí. Esto es para dañar al gobierno, para dañarlo al presidente."</em></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="acc-item">
+        <div class="acc-header">
+          <div class="acc-header-left">
+            <span class="acc-code">F-5</span>
+            <span class="acc-title">Pendiente Resbaladiza</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span class="acc-deduction">−15</span>
+            <span class="acc-chevron">▼</span>
+          </div>
+        </div>
+        <div class="acc-body">
+          <div class="acc-content">
+            <div>
+              <div class="acc-field-label">Descripción</div>
+              <div class="acc-field-val">Si el gobierno no gana en 2027, el país inevitablemente regresa al ciclo de destrucción anterior. No ofrece evidencia del mecanismo causal, ni considera escenarios alternativos.</div>
+            </div>
+            <div>
+              <div class="acc-field-label">Cita representativa</div>
+              <div class="acc-field-val"><em>"Si llegan a ganar el 2027... es la última chance."</em></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="acc-item">
+        <div class="acc-header">
+          <div class="acc-header-left">
+            <span class="acc-code">F-6</span>
+            <span class="acc-title">Post Hoc Ergo Propter Hoc</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span class="acc-deduction">−15</span>
+            <span class="acc-chevron">▼</span>
+          </div>
+        </div>
+        <div class="acc-body">
+          <div class="acc-content">
+            <div>
+              <div class="acc-field-label">Descripción</div>
+              <div class="acc-field-val">Atribuye directamente los 16.150 millones de dólares de inversión al proceso iniciado el 10/12/2023, sin considerar variables externas, ciclos de inversión internacionales ni precio de commodities.</div>
+            </div>
+            <div>
+              <div class="acc-field-label">Cita representativa</div>
+              <div class="acc-field-val"><em>"Esto fue el resultado del proceso desde el 10 de diciembre de 2023, de los viajes del presidente."</em></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- AUDITORÍA ENTREVISTADOR -->
+<section>
+  <div class="container">
+    <div class="section-label">Auditoría del Entrevistador</div>
+    <div style="overflow-x:auto">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Código</th>
+            <th>Pregunta / Intervención</th>
+            <th>Clasificación</th>
+            <th>Deducción</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="acc-code" style="font-size:9px">M-1</span></td>
+            <td>"¿Cómo la piloteás en este tiempo con tu familia?"</td>
+            <td><span class="tag softball">Softball</span></td>
+            <td style="color:var(--red)">−20</td>
+          </tr>
+          <tr>
+            <td><span class="acc-code" style="font-size:9px">M-2</span></td>
+            <td>"¿Te arrepentís?" — responde él mismo antes de escuchar</td>
+            <td><span class="tag complaciente">Complaciente</span></td>
+            <td style="color:var(--red)">−20</td>
+          </tr>
+          <tr>
+            <td><span class="acc-code" style="font-size:9px">M-3</span></td>
+            <td>Ante E-1 (escudo judicial), acepta sin repregunta</td>
+            <td><span class="tag omision">Omisión Obligatoria</span></td>
+            <td style="color:var(--red)">−15</td>
+          </tr>
+          <tr>
+            <td><span class="acc-code" style="font-size:9px">M-4</span></td>
+            <td>"No te vas nunca, ¿no?" — valida la respuesta antes de recibirla</td>
+            <td><span class="tag complaciente">Complaciente</span></td>
+            <td style="color:var(--red)">−20</td>
+          </tr>
+          <tr>
+            <td><span class="acc-code" style="font-size:9px">M-5</span></td>
+            <td>Introduce él mismo la anécdota de Lacalle Pou como ejemplo del "sufrimiento de la custodia"</td>
+            <td><span class="tag complaciente">Complaciente</span></td>
+            <td style="color:var(--red)">−20</td>
+          </tr>
+          <tr>
+            <td><span class="acc-code" style="font-size:9px">M-6</span></td>
+            <td>"¿Qué pasó de bueno en Argentina Week?" — habilita el pivot más efectivo</td>
+            <td><span class="tag complaciente">Complaciente</span></td>
+            <td style="color:var(--red)">−20</td>
+          </tr>
+          <tr>
+            <td><span class="acc-code" style="font-size:9px">M-7</span></td>
+            <td>"¿Lo tuyo es análogo a Karina con Andíz?" — introduce él mismo la comparación favorable</td>
+            <td><span class="tag complaciente">Complaciente</span></td>
+            <td style="color:var(--red)">−20</td>
+          </tr>
+          <tr>
+            <td><span class="acc-code" style="font-size:9px">M-8</span></td>
+            <td>Pregunta sobre los libros que va a escribir — irrelevante en contexto judicial</td>
+            <td><span class="tag softball">Softball</span></td>
+            <td style="color:var(--red)">−20</td>
+          </tr>
+          <tr>
+            <td><span class="acc-code" style="font-size:9px">M-9</span></td>
+            <td>Confronta por qué Adorni no habla públicamente más seguido</td>
+            <td><span class="tag rigor">Rigor</span></td>
+            <td style="color:#34D399">+15</td>
+          </tr>
+          <tr>
+            <td><span class="acc-code" style="font-size:9px">M-10</span></td>
+            <td>Señala "amateurismo" en el episodio del recital de Fito Páez — no profundiza</td>
+            <td><span class="tag softball">Rigor Parcial</span></td>
+            <td style="color:var(--text-muted)">+0</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- PREGUNTAS PERDIDAS -->
+<section>
+  <div class="container">
+    <div class="section-label">La Pregunta Perdida — 5 preguntas no formuladas</div>
+    <div class="questions-grid">
+      <div class="question-item">
+        <div class="question-num">1</div>
+        <div class="question-text">"Dijiste que al principio pudiste hablar del tema porque 'no estaba judicializado'. ¿Qué dijiste exactamente en esa nota con Majul y por qué eso no era obstrucción y esto sí lo sería?"</div>
+      </div>
+      <div class="question-item">
+        <div class="question-num">2</div>
+        <div class="question-text">"Tu esposa aparece en el centro de la causa. ¿Ella tiene representación legal independiente de la tuya? ¿Cómo afecta eso a la investigación?"</div>
+      </div>
+      <div class="question-item">
+        <div class="question-num">3</div>
+        <div class="question-text">"Mencionaste aproximadamente 20 viajes al exterior en tu función. ¿Cuántos incluyeron acompañantes no gubernamentales y quién financió esos acompañantes?"</div>
+      </div>
+      <div class="question-item">
+        <div class="question-num">4</div>
+        <div class="question-text">"Decís que el objetivo real es dañar al presidente. Pero la causa la inició un juez, no un medio. ¿Cuál es exactamente el mecanismo por el que el 'sistema' habría activado al Poder Judicial?"</div>
+      </div>
+      <div class="question-item">
+        <div class="question-num">5</div>
+        <div class="question-text">"Afirmás que vienen inversiones históricas. Los salarios reales todavía no recuperaron el nivel de 2023 para amplios sectores. ¿Cómo reconciliás ese dato con el relato de transformación histórica?"</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VEREDICTO -->
+<section>
+  <div class="container">
+    <div class="section-label">Veredicto Final</div>
+    <div class="veredicto-block">
+      <div class="veredicto-text">
+        <p>Esta entrevista es un caso de manual sobre cómo el formato conversacional puede ser instrumentalizado para producir el efecto opuesto al periodismo: en lugar de generar información nueva, consolida el relato del entrevistado, le otorga legitimidad emocional y le provee de una plataforma <span class="veredicto-highlight">sin fricción real</span>.</p>
+
+        <p>Adorni ejecuta con eficiencia una estrategia retórica de tres capas. La primera es el <span class="veredicto-highlight">escudo judicial</span>: cualquier pregunta incómoda es bloqueada con "no puedo hablar porque obstruiría la justicia", que suena responsable pero es irrefutable por definición. La segunda es la <span class="veredicto-highlight">victimización sistémica</span>: él no es un funcionario bajo sospecha sino un ciudadano honesto perseguido por fuerzas oscuras que en realidad quieren dañar al presidente. La tercera es la <span class="veredicto-highlight">apelación emocional permanente</span>: los hijos, la esposa, la madre, los amigos que no escribieron. Cada vez que el análisis racional amenaza con instalarse, una emoción lo desplaza.</p>
+
+        <p>Lo más significativo no es lo que Adorni dijo, sino lo que logró hacer: salir de una entrevista de dos horas y media sobre una investigación judicial activa <span class="veredicto-highlight">sin revelar un solo dato nuevo</span>, sin comprometerse con ningún plazo concreto, sin admitir ninguna inconsistencia, siendo despedido con elogios. Eso no es inocencia demostrada. Es gestión retórica de primer nivel.</p>
+
+        <p>Fantino no falla por mala fe sino por un defecto estructural de su estilo: <span class="veredicto-highlight">la entrevista como vínculo afectivo</span>. Su declarada incapacidad para "hincar el cuchillo" no es modestia periodística, es una confesión de renuncia a la función. En ningún momento contrastó una afirmación con datos externos. En ningún momento repreguntó ante una evasiva evidente. El resultado es una conversación que, con toda su duración, aporta menos información verificable que un comunicado de prensa oficial.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TWITTER -->
+<section>
+  <div class="container">
+    <div class="section-label">Hilo para Twitter / X</div>
+    <div class="twitter-block">
+      <div class="tweet">
+        <div class="tweet-num">Tuit 1 / 5</div>
+        🧵 SOBRENÓMETRO aplicado a Adorni con Fantino en #LaCosaEnSí — Analizamos 2,5 horas con retórica, lógica y rigor periodístico medidos punto a punto. Resultado: Adorni 15/100 🔴 | Fantino -20/100 🔴. Hilo 👇
+      </div>
+      <div class="tweet">
+        <div class="tweet-num">Tuit 2 / 5</div>
+        EVASIVA MÁS GRAVE: Adorni admite haber hablado del tema cuando "no estaba judicializado" pero nunca explica por qué ahora sí obstruiría. El escudo judicial se aplica cuando conviene, no como principio consistente. −10 pts.
+      </div>
+      <div class="tweet">
+        <div class="tweet-num">Tuit 3 / 5</div>
+        FALACIA MÁS GRAVE: Falsa dicotomía permanente. O Milei transforma Argentina o volvemos al colapso. No existe crítica legítima posible al gobierno sin quedar del lado del "mal". Toda rendición de cuentas bloqueada. −15 pts.
+      </div>
+      <div class="tweet">
+        <div class="tweet-num">Tuit 4 / 5</div>
+        FALLO DEL ENTREVISTADOR: Fantino pregunta "¿qué pasó de bueno en Argentina Week?" — el viaje que tiene a Adorni bajo investigación. Esa pregunta permitió el pivot perfecto hacia logros económicos. Ninguna repregunta. −20 pts.
+      </div>
+      <div class="tweet">
+        <div class="tweet-num">Tuit 5 / 5</div>
+        150 minutos. Cero datos nuevos. Cero compromisos verificables. Cero contradicciones señaladas. Adorni sale mejor de lo que entró. Eso no es periodismo, es gestión de imagen con micrófono ajeno. Informe completo 👇 #Sobrenómetro
+      </div>
+      <button class="copy-btn" onclick="copyTweets()">Copiar hilo completo</button>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-brand">SOBRENÓMETRO</div>
+  <div class="footer-note">Subí este archivo a GitHub Pages para obtener una URL única y compartible. Nombre sugerido: <strong>sobrenometro-adorni-neuramedia-mayo2026.html</strong></div>
+</footer>
+
+<script>
+// Accordion
+document.querySelectorAll('.acc-header').forEach(header => {
+  header.addEventListener('click', () => {
+    const item = header.parentElement;
+    const wasOpen = item.classList.contains('open');
+    // close siblings
+    item.parentElement.querySelectorAll('.acc-item').forEach(i => i.classList.remove('open'));
+    if (!wasOpen) item.classList.add('open');
+  });
+});
+
+// Animate score numbers
+function animateNumber(el, target, duration) {
+  const start = performance.now();
+  const from = 0;
+  function update(now) {
+    const progress = Math.min((now - start) / duration, 1);
+    const eased = 1 - Math.pow(1 - progress, 3);
+    const current = Math.round(from + (target - from) * eased);
+    el.textContent = current;
+    if (progress < 1) requestAnimationFrame(update);
+  }
+  requestAnimationFrame(update);
+}
+
+// Animate progress bars
+function animateBar(el, pct) {
+  setTimeout(() => {
+    el.style.width = Math.max(0, pct) + '%';
+  }, 400);
+}
+
+// Trigger on scroll (or immediately)
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      animateNumber(document.getElementById('score-adorni'), 15, 1200);
+      animateNumber(document.getElementById('score-fantino'), -20, 1200);
+      animateBar(document.getElementById('bar-adorni'), 15);
+      animateBar(document.getElementById('bar-fantino'), 5);
+      observer.disconnect();
+    }
+  });
+}, { threshold: 0.3 });
+
+observer.observe(document.getElementById('score-adorni'));
+
+// Chart
+const ctx = document.getElementById('scoreChart').getContext('2d');
+new Chart(ctx, {
+  type: 'bar',
+  data: {
+    labels: ['Evasivas\n(Adorni)', 'Falacias\n(Adorni)', 'Bonif.\n(Adorni)', 'Softball\n(Fantino)', 'Omisiones\n(Fantino)', 'Complacencia\n(Fantino)', 'Rigor\n(Fantino)'],
+    datasets: [
+      {
+        label: 'Puntos',
+        data: [-90, -90, 10, -60, -15, -60, 15],
+        backgroundColor: [
+          'rgba(232,39,26,0.7)',
+          'rgba(232,39,26,0.5)',
+          'rgba(52,211,153,0.7)',
+          'rgba(79,107,255,0.7)',
+          'rgba(192,132,252,0.7)',
+          'rgba(79,107,255,0.5)',
+          'rgba(52,211,153,0.5)',
+        ],
+        borderColor: [
+          'rgba(232,39,26,1)',
+          'rgba(232,39,26,0.8)',
+          'rgba(52,211,153,1)',
+          'rgba(79,107,255,1)',
+          'rgba(192,132,252,1)',
+          'rgba(79,107,255,0.8)',
+          'rgba(52,211,153,0.8)',
+        ],
+        borderWidth: 1,
+        borderRadius: 2,
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        backgroundColor: '#0E1218',
+        borderColor: '#1E2A36',
+        borderWidth: 1,
+        titleColor: '#8A9099',
+        bodyColor: '#E8E4DC',
+        titleFont: { family: 'DM Mono', size: 10 },
+        bodyFont: { family: 'DM Mono', size: 12 },
+      }
+    },
+    scales: {
+      x: {
+        grid: { color: 'rgba(30,42,54,0.5)' },
+        ticks: { color: '#8A9099', font: { family: 'DM Mono', size: 10 } }
+      },
+      y: {
+        grid: { color: 'rgba(30,42,54,0.5)' },
+        ticks: { color: '#8A9099', font: { family: 'DM Mono', size: 10 } },
+        suggestedMin: -100,
+        suggestedMax: 20,
+      }
+    }
+  }
+});
+
+// Copy tweets
+function copyTweets() {
+  const tweets = document.querySelectorAll('.tweet');
+  let text = '';
+  tweets.forEach((t, i) => {
+    text += t.innerText.replace(/^Tuit \d+ \/ \d+\n/, '').trim();
+    if (i < tweets.length - 1) text += '\n\n';
+  });
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = '✓ Copiado al portapapeles';
+    setTimeout(() => btn.textContent = 'Copiar hilo completo', 2000);
+  });
+}
+</script>
+</body>
+</html>
